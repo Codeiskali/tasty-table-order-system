@@ -1,8 +1,8 @@
 
 import { useState } from "react";
 import { Header } from "@/components/Header";
-import { HeroSection } from "@/components/HeroSection";
-import { MenuSection } from "@/components/MenuSection";
+import { Sidebar } from "@/components/Sidebar";
+import { ProductGrid } from "@/components/ProductGrid";
 import { Cart } from "@/components/Cart";
 
 export interface CartItem {
@@ -13,9 +13,19 @@ export interface CartItem {
   image: string;
 }
 
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  category: string;
+}
+
 const Index = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("burgers");
 
   const addToCart = (item: Omit<CartItem, 'quantity'>) => {
     setCartItems(prev => {
@@ -50,13 +60,23 @@ const Index = () => {
   const cartItemsCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-900">
       <Header 
         cartItemsCount={cartItemsCount} 
         onCartClick={() => setIsCartOpen(true)} 
       />
-      <HeroSection />
-      <MenuSection onAddToCart={addToCart} />
+      <div className="flex">
+        <Sidebar 
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+        />
+        <main className="flex-1 p-8">
+          <ProductGrid 
+            selectedCategory={selectedCategory}
+            onAddToCart={addToCart}
+          />
+        </main>
+      </div>
       <Cart 
         items={cartItems}
         isOpen={isCartOpen}
